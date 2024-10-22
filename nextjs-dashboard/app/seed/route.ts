@@ -104,22 +104,17 @@ async function seedRevenue() {
 export async function GET() {
   try {
     await client.sql`BEGIN`;
+    
     await seedUsers();
     await seedCustomers();
     await seedInvoices();
     await seedRevenue();
+    
     await client.sql`COMMIT`;
-  
+    
     return Response.json({ message: 'Database seeded successfully' });
   } catch (error) {
     await client.sql`ROLLBACK`;
-    
-    // Check if error is an instance of Error
-    if (error instanceof Error) {
-      return Response.json({ error: error.message }, { status: 500 });
-    } else {
-      return Response.json({ error: 'An unknown error occurred' }, { status: 500 });
-    }
+    return Response.json({ error: error.message }, { status: 500 });
   }
-  
 }
