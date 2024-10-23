@@ -23,7 +23,11 @@ async function seedUsers() {
         VALUES (${user.id}, ${user.name}, ${user.email}, ${hashedPassword})
         ON CONFLICT (id) DO NOTHING;
       `;
+<<<<<<< HEAD
     }),
+=======
+    })
+>>>>>>> 409b8d1ec38be87ccf9880cfc0f566a1d6c600be
   );
 
   return insertedUsers;
@@ -43,6 +47,7 @@ async function seedInvoices() {
   `;
 
   const insertedInvoices = await Promise.all(
+<<<<<<< HEAD
     invoices.map(
       (invoice) => client.sql`
         INSERT INTO invoices (customer_id, amount, status, date)
@@ -50,6 +55,15 @@ async function seedInvoices() {
         ON CONFLICT (id) DO NOTHING;
       `,
     ),
+=======
+    invoices.map((invoice) =>
+      client.sql`
+        INSERT INTO invoices (customer_id, amount, status, date)
+        VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date})
+        ON CONFLICT (id) DO NOTHING;
+      `
+    )
+>>>>>>> 409b8d1ec38be87ccf9880cfc0f566a1d6c600be
   );
 
   return insertedInvoices;
@@ -68,6 +82,7 @@ async function seedCustomers() {
   `;
 
   const insertedCustomers = await Promise.all(
+<<<<<<< HEAD
     customers.map(
       (customer) => client.sql`
         INSERT INTO customers (id, name, email, image_url)
@@ -75,6 +90,15 @@ async function seedCustomers() {
         ON CONFLICT (id) DO NOTHING;
       `,
     ),
+=======
+    customers.map((customer) =>
+      client.sql`
+        INSERT INTO customers (id, name, email, image_url)
+        VALUES (${customer.id}, ${customer.name}, ${customer.email}, ${customer.image_url})
+        ON CONFLICT (id) DO NOTHING;
+      `
+    )
+>>>>>>> 409b8d1ec38be87ccf9880cfc0f566a1d6c600be
   );
 
   return insertedCustomers;
@@ -89,6 +113,7 @@ async function seedRevenue() {
   `;
 
   const insertedRevenue = await Promise.all(
+<<<<<<< HEAD
     revenue.map(
       (rev) => client.sql`
         INSERT INTO revenue (month, revenue)
@@ -96,12 +121,22 @@ async function seedRevenue() {
         ON CONFLICT (month) DO NOTHING;
       `,
     ),
+=======
+    revenue.map((rev) =>
+      client.sql`
+        INSERT INTO revenue (month, revenue)
+        VALUES (${rev.month}, ${rev.revenue})
+        ON CONFLICT (month) DO NOTHING;
+      `
+    )
+>>>>>>> 409b8d1ec38be87ccf9880cfc0f566a1d6c600be
   );
 
   return insertedRevenue;
 }
 
 export async function GET() {
+<<<<<<< HEAD
  try {
    await client.sql`BEGIN`;
    await seedUsers();
@@ -116,4 +151,21 @@ export async function GET() {
    return Response.json({ error }, { status: 500 });
  }
   
+=======
+  try {
+    await client.sql`BEGIN`;
+    
+    await seedUsers();
+    await seedCustomers();
+    await seedInvoices();
+    await seedRevenue();
+    
+    await client.sql`COMMIT`;
+    
+    return Response.json({ message: 'Database seeded successfully' });
+  } catch (error) {
+    await client.sql`ROLLBACK`;
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+>>>>>>> 409b8d1ec38be87ccf9880cfc0f566a1d6c600be
 }
